@@ -55,18 +55,37 @@ database.ref().on("child_added", function(childSnapshot, prevChildKey) {
   var firstTrain = childSnapshot.val().first;
   var freq = childSnapshot.val().frequency;
 
-
   //Converting value to readable time
-  var nextTrainPretty = moment.unix(firstTrain).format("HH:mm");
-
+  var firstTrainPretty = moment.unix(firstTrain).format("HH:mm");
+  console.log(firstTrainPretty)
   // Pseudo Coding of whats left to do
   // 1. Need to do the math for finding next arrival
   // 2. For Minutes away find the time difference between
   // the current moment and next arrival
   // 3. Store results of both of these and display to page with line of code below
+    var firstTimeConverted = moment(firstTrainPretty, "hh:mm").subtract(1, "years");
+    console.log(firstTimeConverted);
 
+    // var firstTrainConverted = moment(firstTrainPretty, "HH:mm");
+    // console.log(firstTrainConverted);
+    // Difference between the times
+    var trainDiff = moment().diff(moment(firstTrainPretty), "minutes");
+    console.log("DIFFERENCE IN TIME: " + trainDiff);
+
+    // Time apart (remainder)
+    var trainRemainder = trainDiff % freq;
+    console.log(trainRemainder);
+
+    // Minute Until Train
+    var tMinutesTillTrain = freq - trainRemainder;
+    console.log("MINUTES TILL TRAIN: " + tMinutesTillTrain);
+
+    // Next Train
+    var nextTrain = moment().add(tMinutesTillTrain, "minutes");
+    console.log("ARRIVAL TIME: " + moment(nextTrain).format("hh:mm"));
+    var nextTrainPretty = moment.unix(nextTrain).format("HH:mm");
 
   //Add each train's data into the table
   $("#train-table > tbody").append("<tr><td>" + trainName + "</td><td>" + dest + "</td><td>" +
-  freq + "</td><td>" + nextTrainPretty + "</td><td>" + freq + "</td></tr>");
+  freq + "</td><td>" + nextTrainPretty + "</td><td>" + tMinutesTillTrain + "</td></tr>");
 });
